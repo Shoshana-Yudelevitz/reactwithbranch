@@ -13,23 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if branch name is valid
-        if: startsWith(github.ref, 'refs/heads/name/')
-        run: echo "Branch name is valid: ${GITHUB_REF}"
-
+      # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v2
       
+      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '16'
 
+      # Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # Run tests
       - name: Run tests
         run: npm test
 
+      # Build the project
       - name: Build project
         run: npm run build
+
+      # Validate branch name
+      - name: Validate branch name
+        if: "!startsWith(github.ref, 'refs/heads/name/')"
+        run: |
+          echo "Branch name does not follow the required pattern."
+          exit 1
